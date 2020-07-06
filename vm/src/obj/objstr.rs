@@ -29,12 +29,12 @@ use crate::cformat::{
 };
 use crate::format::{FormatParseError, FormatPart, FormatPreconversor, FormatSpec, FormatString};
 use crate::function::{OptionalArg, OptionalOption, PyFuncArgs};
-use crate::pyhash;
 use crate::pyobject::{
     IdProtocol, IntoPyObject, ItemProtocol, PyClassImpl, PyContext, PyIterable, PyObjectRef, PyRef,
     PyResult, PyValue, TryFromObject, TryIntoRef, TypeProtocol,
 };
 use crate::vm::VirtualMachine;
+use rustpython_common::hash;
 
 /// str(object='') -> str
 /// str(bytes_or_buffer[, encoding[, errors]]) -> str
@@ -50,7 +50,7 @@ use crate::vm::VirtualMachine;
 #[derive(Debug)]
 pub struct PyString {
     value: String,
-    hash: AtomicCell<Option<pyhash::PyHash>>,
+    hash: AtomicCell<Option<hash::PyHash>>,
     len: AtomicCell<Option<usize>>,
 }
 
@@ -284,9 +284,9 @@ impl PyString {
     }
 
     #[pymethod(name = "__hash__")]
-    pub(crate) fn hash(&self) -> pyhash::PyHash {
+    pub(crate) fn hash(&self) -> hash::PyHash {
         self.hash.load().unwrap_or_else(|| {
-            let hash = pyhash::hash_value(&self.value);
+            let hash = hash::hash_value(&self.value);
             self.hash.store(Some(hash));
             hash
         })

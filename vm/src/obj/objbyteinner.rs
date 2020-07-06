@@ -15,11 +15,11 @@ use super::objslice::PySliceRef;
 use super::objstr::{self, PyString, PyStringRef};
 use super::pystr::{self, PyCommonString, PyCommonStringWrapper};
 use crate::function::{OptionalArg, OptionalOption};
-use crate::pyhash;
 use crate::pyobject::{
     Either, PyComparisonValue, PyIterable, PyObjectRef, PyResult, TryFromObject, TypeProtocol,
 };
 use crate::vm::VirtualMachine;
+use rustpython_common::hash;
 
 #[derive(Debug, Default, Clone)]
 pub struct PyByteInner {
@@ -254,7 +254,7 @@ impl ByteInnerSplitlinesOptions {
 
 #[allow(clippy::len_without_is_empty)]
 impl PyByteInner {
-    pub fn repr(&self) -> PyResult<String> {
+    pub fn repr(&self) -> String {
         let mut res = String::with_capacity(self.elements.len());
         for i in self.elements.iter() {
             match i {
@@ -267,7 +267,7 @@ impl PyByteInner {
                 _ => res.push_str(&format!("\\x{:x}", i)),
             }
         }
-        Ok(res)
+        res
     }
 
     pub fn len(&self) -> usize {
@@ -304,8 +304,8 @@ impl PyByteInner {
         self.cmp(other, |a, b| a < b, vm)
     }
 
-    pub fn hash(&self) -> pyhash::PyHash {
-        pyhash::hash_value(&self.elements)
+    pub fn hash(&self) -> hash::PyHash {
+        hash::hash_value(&self.elements)
     }
 
     pub fn add(&self, other: PyByteInner) -> Vec<u8> {

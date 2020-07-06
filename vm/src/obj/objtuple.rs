@@ -5,14 +5,14 @@ use super::objiter;
 use super::objsequence::get_item;
 use super::objtype::PyClassRef;
 use crate::function::OptionalArg;
-use crate::pyhash;
 use crate::pyobject::{
-    IntoPyObject,
+    self, IntoPyObject,
     PyArithmaticValue::{self, *},
     PyClassImpl, PyComparisonValue, PyContext, PyObjectRef, PyRef, PyResult, PyValue,
 };
 use crate::sequence;
 use crate::vm::{ReprGuard, VirtualMachine};
+use rustpython_common::hash::PyHash;
 
 /// tuple() -> empty tuple
 /// tuple(iterable) -> tuple initialized from iterable's items
@@ -153,8 +153,8 @@ impl PyTuple {
     }
 
     #[pymethod(name = "__hash__")]
-    fn hash(&self, vm: &VirtualMachine) -> PyResult<pyhash::PyHash> {
-        pyhash::hash_iter(self.elements.iter(), vm)
+    fn hash(&self, vm: &VirtualMachine) -> PyResult<PyHash> {
+        pyobject::hash_iter(self.elements.iter(), vm)
     }
 
     #[pymethod(name = "__iter__")]

@@ -4,7 +4,6 @@ use super::objlist::PyList;
 use super::objstr::PyStringRef;
 use super::objtype::PyClassRef;
 use crate::function::{OptionalArg, PyFuncArgs};
-use crate::pyhash;
 use crate::pyobject::{
     IdProtocol, ItemProtocol, PyArithmaticValue::*, PyAttributes, PyClassImpl, PyComparisonValue,
     PyContext, PyObject, PyObjectRef, PyResult, PyValue, TryFromObject, TypeProtocol,
@@ -84,8 +83,8 @@ impl PyBaseObject {
     }
 
     #[pymethod(magic)]
-    fn hash(zelf: PyObjectRef) -> pyhash::PyHash {
-        zelf.get_id() as pyhash::PyHash
+    fn hash(zelf: PyObjectRef) -> rustpython_common::hash::PyHash {
+        zelf.get_id() as _
     }
 
     #[pymethod(magic)]

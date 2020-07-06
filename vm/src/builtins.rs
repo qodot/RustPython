@@ -25,7 +25,6 @@ use crate::obj::objiter;
 use crate::obj::objsequence;
 use crate::obj::objstr::{PyString, PyStringRef};
 use crate::obj::objtype::{self, PyClassRef};
-use crate::pyhash;
 use crate::pyobject::{
     Either, IdProtocol, ItemProtocol, PyCallable, PyIterable, PyObjectRef, PyResult, PyValue,
     TryFromObject, TypeProtocol,
@@ -35,6 +34,7 @@ use crate::scope::Scope;
 #[cfg(feature = "rustpython-parser")]
 use crate::stdlib::ast;
 use crate::vm::VirtualMachine;
+use rustpython_common::hash::PyHash;
 
 fn builtin_abs(x: PyObjectRef, vm: &VirtualMachine) -> PyResult {
     let method = vm.get_method_or_type_error(x.clone(), "__abs__", || {
@@ -325,7 +325,7 @@ fn builtin_hasattr(obj: PyObjectRef, attr: PyStringRef, vm: &VirtualMachine) -> 
     }
 }
 
-fn builtin_hash(obj: PyObjectRef, vm: &VirtualMachine) -> PyResult<pyhash::PyHash> {
+fn builtin_hash(obj: PyObjectRef, vm: &VirtualMachine) -> PyResult<PyHash> {
     vm._hash(&obj)
 }
 
